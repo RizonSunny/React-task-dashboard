@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# Task Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A self-study React project — building a Team Task Management Dashboard end-to-end to learn modern React before moving to Next.js. Full plan is 12 phases; this README tracks what's done.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React + TypeScript
+- Vite
+- Tailwind CSS v4
+- React Router
 
-## React Compiler
+## Phases completed
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### ✅ Project setup
+- Vite scaffold with React + TypeScript
+- Tailwind v4 wired via `@tailwindcss/vite` plugin
+- Folder structure: `components`, `pages`, `hooks`, `context`, `types`, `utils`, `layouts`, `data`
 
-## Expanding the ESLint configuration
+### ✅ Layout system
+- `DashboardLayout` shell with persistent Sidebar + Navbar
+- React Router nested routes via `<Outlet />`
+- `NavLink` with `isActive` for active-link highlighting
+- Pages: Dashboard, Tasks, Profile, Settings
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### ✅ Dashboard overview
+- 4 stat cards (Total, Completed, Pending, High Priority) — values **derived** from data, not stored
+- Recent Tasks list sorted by due date
+- Priority + status pills with conditional Tailwind classes
+- Responsive grid: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+> Phase 3 (reusable UI components) was intentionally skipped — building inline first to feel real duplication before extracting. Will extract in Phase 9.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### ✅ Task CRUD with useState
+- Tasks page: list, create, edit, delete
+- One form modal serving two modes (create / edit) via a tri-state variable: `null | "create" | Task`
+- Manual validation function (no Zod yet — that's Phase 6)
+- Confirm-delete modal with click-outside-to-close
+- Immutable updates: `prev.filter`, `prev.map`, `[newTask, ...prev]`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Concepts practiced so far
+
+- TypeScript literal union types (`"todo" | "in-progress" | "done"`)
+- Deriving state from data instead of duplicating it
+- Immutable array updates and why `.sort()` is dangerous
+- `min-w-0` flexbox gotcha
+- Event bubbling and `stopPropagation` on modal backdrops
+- `type="button"` to prevent accidental form submission
+- Controlled forms with `useState` + spread updates
+- Functional state updates (`setX(prev => ...)`)
+- The `prev.map(t => t.id === id ? {...t, ...changes} : t)` update pattern
+- TypeScript narrowing vs `as` type assertions
+- `crypto.randomUUID()` for client-side IDs
+
+## All phases
+
+| # | Phase | Focus | Status |
+|---|-------|-------|--------|
+| 1 | Project setup | Vite + React + TS + Tailwind v4, folder structure | ✅ |
+| 2 | Layout system | Sidebar, Navbar, DashboardLayout, React Router | ✅ |
+| 3 | Reusable UI components | Button, Input, Card, Modal | ⏭️ Skipped (will extract in Phase 9 once duplication is real) |
+| 4 | Dashboard overview | Stat cards + recent tasks, derived from data | ✅ |
+| 5 | Task CRUD with useState | Create / edit / delete tasks, manual validation | ✅ |
+| 6 | Zod validation | Collapse the imperative `validate()` into a schema | ⬜ |
+| 7 | React Hook Form | Stop hand-managing form state | ⬜ |
+| 8 | TanStack Table | Real data table with sort / filter / paginate / global search | ⬜ |
+| 9 | Custom hooks | Extract `useTasks`, `useDebounce`, `useLocalStorage`, `useModal` | ⬜ |
+| 10 | Context API | Auth + Theme global state, dark mode, protected routes | ⬜ |
+| 11 | Data fetching | Replace mocks with JSONPlaceholder (+ TanStack Query) | ⬜ |
+| 12 | Optimization | `useMemo`, `useCallback`, `React.memo` — only where profiling shows wins | ⬜ |
+
+## Running locally
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Open [http://localhost:5173](http://localhost:5173).

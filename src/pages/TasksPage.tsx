@@ -99,7 +99,7 @@ export default function TasksPage() {
             };
             setTasks((prev) => [newTask, ...prev]);
         }        
-        closeCreate();
+        closeForm();
 
     }
   
@@ -209,7 +209,7 @@ export default function TasksPage() {
             { formMode !==null && (
                 <div
                     className="ABC fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-                    onClick={closeCreate}
+                    onClick={closeForm}
                 >
                     <div
                         className="bg-white rounded-lg w-full max-w-lg shadow-lg"
