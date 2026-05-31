@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 import { mockTasks } from "../data/mockTasks"
-import type { Task, TaskFormState, TaskPriority, TaskStatus} from "../types/task"
-import { data } from "react-router-dom"
+import type { Task} from "../types/task"
+import { taskFormSchema, type TaskFormType } from "../schemas/taskFormSchema"
 
-const emptyForm: TaskFormState = {
+const emptyForm: TaskFormType = {
     title: "",
     description: "",
     status: "todo",
@@ -19,8 +19,8 @@ export default function TasksPage() {
     //create modal state
     // const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [formMode, setFormMode] = useState<null | "create" | Task>(null); /// null = closed, create = create mode, Task = edit mode
-    const [form, setForm] = useState<TaskFormState>(emptyForm);
-    const [errors, setErrors] = useState<Partial<Record<keyof TaskFormState, string>>>({});
+    const [form, setForm] = useState<TaskFormType>(emptyForm);
+    const [errors, setErrors] = useState<Partial<Record<keyof TaskFormType, string>>>({});
 
     const isEditing = formMode !== null && formMode !== "create";
 
@@ -54,35 +54,42 @@ export default function TasksPage() {
         setFormMode(null);
     }
 
-    const validate = (data: TaskFormState) => {
-        const newErrors: Partial<Record<keyof TaskFormState, string>> = {};
-        if (!data.title.trim()) newErrors.title = "Title is required";
-        else if (data.title.trim().length < 3) newErrors.title = "Title must be at least 3 characters";
-        if (data.description.trim().length > 200) newErrors.description = "Description must be ≤ 200 characters";
-        if (!data.assignee.trim()) newErrors.assignee = "Assignee is required";
-        if (!data.dueDate) newErrors.dueDate = "Due date is required";
-        return newErrors;
-    }
+    // const validate = (data: TaskFormType) => {
+    //     const newErrors: Partial<Record<keyof TaskFormType, string>> = {};
+    //     if (!data.title.trim()) newErrors.title = "Title is required";
+    //     else if (data.title.trim().length < 3) newErrors.title = "Title must be at least 3 characters";
+    //     if (data.description.trim().length > 200) newErrors.description = "Description must be ≤ 200 characters";
+    //     if (!data.assignee.trim()) newErrors.assignee = "Assignee is required";
+    //     if (!data.dueDate) newErrors.dueDate = "Due date is required";
+    //     return newErrors;
+    // }
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const newErrors = validate(form);
-        setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0) return;
+        const result = taskFormSchema.safeParse(form);
+        if(!result.success) {
+            const fieldErrors = result.error.flatten().fieldErrors;
+            setErrors({
+                title: fieldErrors.title?.[0],
+                description: fieldErrors.description?.[0],
+                assignee: fieldErrors.assignee?.[0],
+                dueDate: fieldErrors.dueDate?.[0],
+                status: fieldErrors.status?.[0],
+                priority: fieldErrors.priority?.[0],
+            })
+            return;
+        }
+
+        const data = result.data;
+        setErrors({});
 
         if (isEditing) {
-            const editing = formMode;
+            const editing = formMode as Task;
             setTasks((prev) => 
                 prev.map((t) => 
                     t.id === editing.id 
                     ? {
-                        ...t,
-                        title: form.title.trim(),
-                        description: form.description.trim(),
-                        status: form.status,
-                        priority: form.priority,
-                        assignee: form.assignee.trim(),
-                        dueDate: form.dueDate,
+                        ...t, ...data
                     }
                     : t
                 )
@@ -90,12 +97,7 @@ export default function TasksPage() {
         } else {
             const newTask: Task = {
                 id: crypto.randomUUID(),
-                title: form.title.trim(),
-                description: form.description.trim(),
-                status: form.status,
-                priority: form.priority,
-                assignee: form.assignee.trim(),
-                dueDate: form.dueDate,
+                ...data,
             };
             setTasks((prev) => [newTask, ...prev]);
         }        
@@ -251,7 +253,7 @@ export default function TasksPage() {
                                     <select
                                         id="status"
                                         value={form.status}
-                                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as TaskStatus }))}
+                                        onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as TaskFormType["status"] }))}
                                         className="px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                                     >
                                         <option value="todo">Todo</option>
@@ -264,7 +266,7 @@ export default function TasksPage() {
                                     <select
                                         id="priority"
                                         value={form.priority}
-                                        onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value as TaskPriority }))}
+                                        onChange={(e) => setForm((p) => ({ ...p, priority: e.target.value as TaskFormType["priority"] }))}
                                         className="px-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-400"
                                     >
                                         <option value="low">Low</option>

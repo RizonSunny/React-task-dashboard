@@ -33,9 +33,15 @@ A self-study React project — building a Team Task Management Dashboard end-to-
 ### ✅ Task CRUD with useState
 - Tasks page: list, create, edit, delete
 - One form modal serving two modes (create / edit) via a tri-state variable: `null | "create" | Task`
-- Manual validation function (no Zod yet — that's Phase 6)
 - Confirm-delete modal with click-outside-to-close
 - Immutable updates: `prev.filter`, `prev.map`, `[newTask, ...prev]`
+
+### ✅ Zod validation
+- `taskFormSchema` in `src/schemas/taskFormSchema.ts` — single source of truth
+- Form values type **derived** from the schema via `z.infer<typeof taskFormSchema>` (no hand-written type)
+- `safeParse` + `error.flatten().fieldErrors` replaces the imperative `validate()` function
+- Auto-trim built into the schema via `.string().trim()` — no manual `.trim()` calls in submit
+- Chained validators with custom messages (`.min(3, "Title must be at least 3 characters")`)
 
 ## Concepts practiced so far
 
@@ -50,6 +56,10 @@ A self-study React project — building a Team Task Management Dashboard end-to-
 - The `prev.map(t => t.id === id ? {...t, ...changes} : t)` update pattern
 - TypeScript narrowing vs `as` type assertions
 - `crypto.randomUUID()` for client-side IDs
+- Zod schemas as runtime values (not just compile-time types)
+- `z.infer` to derive TypeScript types from schemas
+- `safeParse` vs `parse` for forms vs strict parsing
+- Indexed access types: `TaskFormValues["status"]`
 
 ## All phases
 
@@ -60,7 +70,7 @@ A self-study React project — building a Team Task Management Dashboard end-to-
 | 3 | Reusable UI components | Button, Input, Card, Modal | ⏭️ Skipped (will extract in Phase 9 once duplication is real) |
 | 4 | Dashboard overview | Stat cards + recent tasks, derived from data | ✅ |
 | 5 | Task CRUD with useState | Create / edit / delete tasks, manual validation | ✅ |
-| 6 | Zod validation | Collapse the imperative `validate()` into a schema | ⬜ |
+| 6 | Zod validation | Collapse the imperative `validate()` into a schema | ✅ |
 | 7 | React Hook Form | Stop hand-managing form state | ⬜ |
 | 8 | TanStack Table | Real data table with sort / filter / paginate / global search | ⬜ |
 | 9 | Custom hooks | Extract `useTasks`, `useDebounce`, `useLocalStorage`, `useModal` | ⬜ |
