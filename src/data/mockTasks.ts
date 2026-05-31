@@ -1,0 +1,58 @@
+import type { Task } from "../types/task";
+
+export const mockTasks: Task[] = [
+  {
+    id: "1",
+    title: "Design login page",
+    description: "Wireframe + final UI for the login screen",
+    status: "done",
+    priority: "high",
+    assignee: "Rizon",
+    dueDate: "2026-06-01",
+  },
+  {
+    id: "2",
+    title: "Set up CI pipeline",
+    description: "GitHub Actions for build + test",
+    status: "in-progress",
+    priority: "high",
+    assignee: "Rizon",
+    dueDate: "2026-06-05",
+  },
+  {
+    id: "3",
+    title: "Write API documentation",
+    description: "Document all endpoints with examples",
+    status: "todo",
+    priority: "medium",
+    assignee: "Sara",
+    dueDate: "2026-06-10",
+  },
+  {
+    id: "4",
+    title: "Fix sidebar overflow bug",
+    description: "Sidebar scrolls horizontally on small screens",
+    status: "todo",
+    priority: "low",
+    assignee: "Alex",
+    dueDate: "2026-06-12",
+  },
+  {
+    id: "5",
+    title: "Migrate to Tailwind v4",
+    description: "Update config and verify all classes",
+    status: "done",
+    priority: "medium",
+    assignee: "Rizon",
+    dueDate: "2026-05-28",
+  },
+  {
+    id: "6",
+    title: "Build task table",
+    description: "Use TanStack Table for the tasks page",
+    status: "todo",
+    priority: "high",
+    assignee: "Rizon",
+    dueDate: "2026-06-20",
+  },
+];
